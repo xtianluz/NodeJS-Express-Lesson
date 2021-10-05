@@ -1,4 +1,5 @@
-const http = require('http')
+const express = require('express')
+const app = express()
 
 let notes = [
     {
@@ -21,10 +22,24 @@ let notes = [
     }
 ]
 
+app.get('/', (request, response) => {
+    response.send('<h1>Hello World!Node JS Express</h1>')
+})
 
-const app = http.createServer((request, response) => {
-    response.writeHead(200, { 'Content-Type': 'application/json' })
-    response.end(JSON.stringify(notes))
+app.get('/api/notes/:id', (request, response) => {
+    const id = Number(request.params.id)
+    // const note = notes.find(note => {
+    //     console.log(note.id, typeof note.id, id, typeof id, note.id === id)
+    //     return note.id === id
+    // })
+    const note = notes.find(note => note.id === id)
+    
+    if (note) {
+        response.json(note)
+    } else{
+        response.status(404).end()
+    }
+    
 })
 
 const PORT = 3001
