@@ -2,7 +2,7 @@ GET http://localhost:3001/api/notes
 
 ###
 
-GET http://localhost:3001/api/notes/1
+GET http://localhost:3001/api/notes/5
 
 ###
 
@@ -17,3 +17,6 @@ Content-Type: application/json
     "content": "Postman is a good tool for testing REST apis",
     "important": true
 }
+
+###
+GET http://localhost:3001

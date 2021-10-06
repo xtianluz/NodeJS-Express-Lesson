@@ -1,5 +1,13 @@
 const express = require('express')
 const app = express()
+const cors = require('cors')
+const morgan = require('morgan')
+
+const morganFormat = ":method :url :status :res[content-length] - :response-time ms"
+morgan.token('body',(req) => JSON.stringify(req.body))
+app.use(morgan(`${morganFormat} :body`))
+
+app.use(cors())
 
 app.use(express.json())
 
@@ -25,7 +33,7 @@ let notes = [
 ]
 
 app.get('/', (request, response) => {
-    response.send('<h1>Hello World!Node JS Express</h1>')
+    response.send('<h1>Notes App Server</h1>')
 })
 
 app.get('/api/notes', (request, response) => {
@@ -34,10 +42,6 @@ app.get('/api/notes', (request, response) => {
 
 app.get('/api/notes/:id', (request, response) => {
     const id = Number(request.params.id)
-    // const note = notes.find(note => {
-    //     console.log(note.id, typeof note.id, id, typeof id, note.id === id)
-    //     return note.id === id
-    // })
     const note = notes.find(note => note.id === id)
     
     if (note) {
@@ -49,7 +53,7 @@ app.get('/api/notes/:id', (request, response) => {
 })
 
 const generateId = () => {
-  const maxId = notes.length > 0 ? Meth.max(...notes.map(n => n.id)) : 0
+  const maxId = notes.length > 0 ? Math.max(...notes.map(n => n.id)) : 0
   return maxId + 1
 }
 
@@ -82,6 +86,13 @@ app.delete('/api/notes/:id',(request, response) => {
     response.status(204).end()
 })
 
-const PORT = 3001
-app.listen(PORT)
-console.log(`Server running on port ${PORT}`)
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({error: 'unknown endpoint'})
+}
+
+app.use(unknownEndpoint)
+
+const PORT = process.env.PORT || 3001
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
